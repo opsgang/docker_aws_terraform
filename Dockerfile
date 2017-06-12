@@ -1,13 +1,12 @@
 # vim: et sr sw=4 ts=4 smartindent syntax=dockerfile:
 FROM gliderlabs/alpine:3.4
 
-MAINTAINER jinal--shah <jnshah@gmail.com>
 LABEL \
       name="opsgang/aws_terraform" \
       vendor="sortuniq"            \
       description="common tools to run terraform in or for aws"
 
-ENV TERRAFORM_VERSION=0.8.5
+ENV TERRAFORM_VERSION=0.9.4
 
 COPY alpine_build_scripts /alpine_build_scripts
 
