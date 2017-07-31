@@ -8,16 +8,17 @@ LABEL \
 
 ENV TERRAFORM_VERSION=0.9.11
 
-COPY alpine_build_scripts bootstrap.sh /alpine_build_scripts
+COPY alpine_build_scripts/* bootstrap.sh /alpine_build_scripts/
 
 RUN cp /alpine_build_scripts/bootstrap.sh /bootstrap.sh \
-    && chmod a+x /bootstrap.sh \
+    && chmod a+x /bootstrap.sh /alpine_build_scripts/* \
+    && apk --no-cache --update add coreutils \
     && sh /alpine_build_scripts/install_vim.sh \
     && sh /alpine_build_scripts/install_awscli.sh \
     && sh /alpine_build_scripts/install_credstash.sh \
     && sh /alpine_build_scripts/install_terraform.sh \
     && cp -a /alpine_build_scripts/install_terraform.sh \
-        /usr/local/bin/terraform_version.sh \
+        /usr/local/bin/terraform_version \
     && sh /alpine_build_scripts/install_essentials.sh \
     && rm -rf /var/cache/apk/* /alpine_build_scripts 2>/dev/null
 
