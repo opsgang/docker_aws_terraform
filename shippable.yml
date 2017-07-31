@@ -27,7 +27,7 @@ build:
     - v=$(echo $a | jq -r '.version')
     - gt=$(echo $a | jq -r '."opsgang.build_git_tag"')
     - pv=terraform-$(echo $a | jq -r '."opsgang.terraform_version"')
-    - tags="$v $gt $pv stable"
+    - tags="$v $gt $pv bootstrap_test"
     - echo $a | jq . # show me the labels please
     - echo "docker tags:($tags)"
     - docker login -p $DHP -u $DHU
