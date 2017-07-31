@@ -16,11 +16,22 @@ _... alpine container with common tools to use Hashicorp's terraform on or for a
 
 * bash, curl, git, make, jq, openssh client [and friends] [4]
 
-## building
+## docker tags
 
 [![Run Status](https://api.shippable.com/projects/589913a86ee43c0f00b47cb6/badge?branch=master)](https://app.shippable.com/projects/589913a86ee43c0f00b47cb6)
 
-**tags on master are built at shippable.com**
+**tags on master are built at shippable.com and available from dockerhub**
+
+* terraform-_terraform\_version_ e.g. terraform-0.9.4
+    - for your own sake, this is the preferred form to use
+
+* _github tag_
+
+* _build timestamp_ 
+
+Newer versions will also include more recent versions of alpine and tools.
+
+## building
 
 ```bash
 git clone https://github.com/opsgang/docker_aws_terraform.git
@@ -36,6 +47,14 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 ```
 
 ## running
+
+```bash
+# use a version of terraform not built in to an available opsgang container
+# Set env var TERRAFORM_VERSION, and the container will install and use this version.
+#
+# e.g. to use 0.9.8
+docker run --rm -e TERRAFORM_VERSION=0.9.8 -i opsgang/aws_terraform:stable <some cmds to run>
+```
 
 ```bash
 # run /path/to/script.sh which calls terraform, aws cli, curl, jq blah ...
