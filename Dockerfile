@@ -6,7 +6,7 @@ LABEL \
       vendor="sortuniq"            \
       description="common tools to run terraform in or for aws"
 
-ENV TERRAFORM_VERSION=0.9.11
+ENV TERRAFORM_VERSION=0.10.2
 
 COPY alpine_build_scripts/* bootstrap.sh /alpine_build_scripts/
 
