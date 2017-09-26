@@ -59,12 +59,13 @@ apk_pkg_version() {
     | grep -Po "(?<=^$pkg-)[^ ]+(?= description:)" | head -n 1
 }
 
-packer_version() {
-    grep -Po '(?<=\bPACKER_VERSION=)[^\\]+' Dockerfile
-}
-
 terraform_version() {
     grep -Po '(?<=\bTERRAFORM_VERSION=)[^\\]+' Dockerfile
+}
+
+terraform_provider_version() {
+    local n="$1" # provider name
+    grep -Po "(?<=^${n}=)[0-9\.]+" assets/provider.versions
 }
 
 built_by() {
@@ -110,6 +111,8 @@ labels() {
     cv=$(credstash_version) || return 1
     jv=$(apk_pkg_version $ai 'jq') || return 1
     tv=$(terraform_version) && [[ -z "$tv" ]] && return 1
+    tav=$(terraform_provider_version "aws") && [[ -z "$tav" ]] && return 1
+    tfv=$(terraform_provider_version "fastly") && [[ -z "$tfv" ]] && return 1
     bb=$(built_by) || return 1
     gu=$(git_uri) || return 1
     gs=$(git_sha) || return 1
@@ -122,6 +125,8 @@ labels() {
     --label opsgang.credstash_version=$cv
     --label opsgang.jq_version=$jv
     --label opsgang.terraform_version=$tv
+    --label opsgang.terraform_provider_aws=$tav
+    --label opsgang.terraform_provider_fastly=$tfv
     --label opsgang.build_git_uri=$gu
     --label opsgang.build_git_sha=$gs
     --label opsgang.build_git_branch=$gb
