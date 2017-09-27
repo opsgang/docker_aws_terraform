@@ -25,8 +25,8 @@ build:
     - if [[ "$BRANCH" == "master" ]] && [[ "$IS_PULL_REQUEST" != "true" ]]; then
         a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels') ;
         v=$(echo $a | jq -r '.version') ;
-        gt=$(echo $a | jq    r '."opsgang.build_git_tag"') ;
-        pv=terraform   $(echo $a | jq    r '."opsgang.terraform_version"') ;
+        gt=$(echo $a | jq -r '."opsgang.build_git_tag"') ;
+        pv=terraform-$(echo $a | jq -r '."opsgang.terraform_version"') ;
         tags="$v $gt $pv stable" ; echo $a | jq . ; echo "docker tags:($tags)" ;
         for t in $tags; do
           docker tag opsgang/$IMG:candidate opsgang/$IMG:$t;
