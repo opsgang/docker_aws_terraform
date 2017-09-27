@@ -8,9 +8,8 @@ branches:
 env:
   global:
     - IMG="aws_terraform"
-    - SR="https://github.com/opsgang/alpine_build_scripts" 
+    - SR="https://github.com/opsgang/alpine_build_scripts"
     - JQ="https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"
-    - secure: ggiEHJ+dGbY49Yqp3l5uBoZthcvhrqPNPGeB1JVVL9T1cnnEShiI0l8E+ybDoH/RgtqxbtlKqXVH0BVC7uVLIYVxeK2Mo6OldSKbBxubvDmky9RuVvx5Q6AjM20xEC5xOBazeBaU1c/22DPBplKSYofTukFIeUtlgJcgnibXjFAKO/gvaLsG2MGmQcUqE7q6SuUadoZRJwlbEOPD1hE0GvsDm8/+omdM72/aaztKlfyFZzyXZ/QCgZHYsFcCw6C4v5FFmG6IVdQKV8Ud2DlZPr2Hq6oFMNScUDoIw1GocSGSLVlsDxy4Y89V0NgftPfBk6GOJnHYR7Rwq//IgoAnLg==
 
 build:
 
@@ -23,18 +22,23 @@ build:
     - bash ./build.sh # avoid aufs file-locking with new shell
 
   on_success:
-    - a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels')
-    - v=$(echo $a | jq -r '.version')
-    - gt=$(echo $a | jq -r '."opsgang.build_git_tag"')
-    - pv=terraform-$(echo $a | jq -r '."opsgang.terraform_version"')
-    - tags="$v $gt $pv stable"
-    - echo $a | jq . # show me the labels please
-    - echo "docker tags:($tags)"
-    - docker login -p $DHP -u $DHU
-    - if [[ "$IS_PULL_REQUEST" != true ]]; then
+    - if [[ "$BRANCH" == "master" ]]; then
+        a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels') ;
+        v=$(echo $a | jq -r '.version') ;
+        gt=$(echo $a | jq    r '."opsgang.build_git_tag"') ;
+        pv=terraform   $(echo $a | jq    r '."opsgang.terraform_version"') ;
+        tags="$v $gt $pv stable" ; echo $a | jq . ; echo "docker tags:($tags)" ;
         for t in $tags; do
           docker tag opsgang/$IMG:candidate opsgang/$IMG:$t;
           docker push opsgang/$IMG:$t;
           echo "... pushed $IMG:$t";
         done ;
       fi
+
+integrations:
+  hub:
+    - integrationName: opsgang_dockerhub
+      type: docker
+      branches:
+        only:
+          - master
