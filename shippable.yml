@@ -8,9 +8,8 @@ branches:
 env:
   global:
     - IMG="aws_terraform"
-    - SR="https://github.com/opsgang/alpine_build_scripts" 
+    - SR="https://github.com/opsgang/alpine_build_scripts"
     - JQ="https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64"
-    - secure: 3yF/Z8TLKOYeNjdHNqArN5mBrlSRPewBgkQ9ksgucMUgyiOUuWJQgPn7+szasLtA9fqOXhpi2i/CTS/7Tb8bGwmK+pXnciyJ8fmOxXN8UrqVft1eXrYwqxKLt1aU8BC+0MXvz59xJ78eNsgkjwW5ajdibr4yMU42iXsMD4NC8/7UaD31fUG3FqZOTYOPLIo+e3BuDExjjtmLgbB8RMIIewZTNB/z8tN8oIUSL3n8vpe2pdg1T66J3rhcol4gWLUOsZoWl+JrASXYqzci00RXEy4P7w073soZ3eM++Em4PyImxtRd0Xr68w9+b5tG6UPOWdEYujhF3HLAs2+2LrQg3A==
 
 build:
 
@@ -23,16 +22,23 @@ build:
     - bash ./build.sh # avoid aufs file-locking with new shell
 
   on_success:
-    - a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels')
-    - v=$(echo $a | jq -r '.version')
-    - gt=$(echo $a | jq -r '."opsgang.build_git_tag"')
-    - pv=terraform-$(echo $a | jq -r '."opsgang.terraform_version"')
-    - tags="$v $gt $pv stable"
-    - echo $a | jq . # show me the labels please
-    - echo "docker tags:($tags)"
-    - docker login -p $DHP -u $DHU
-    - for t in $tags; do
-        docker tag opsgang/$IMG:candidate opsgang/$IMG:$t;
-        docker push opsgang/$IMG:$t;
-        echo "... pushed $IMG:$t";
-      done
+    - if [[ "$BRANCH" == "master" ]] && [[ "$IS_PULL_REQUEST" != "true" ]]; then
+        a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels') ;
+        v=$(echo $a | jq -r '.version') ;
+        gt=$(echo $a | jq    r '."opsgang.build_git_tag"') ;
+        pv=terraform   $(echo $a | jq    r '."opsgang.terraform_version"') ;
+        tags="$v $gt $pv stable" ; echo $a | jq . ; echo "docker tags:($tags)" ;
+        for t in $tags; do
+          docker tag opsgang/$IMG:candidate opsgang/$IMG:$t;
+          docker push opsgang/$IMG:$t;
+          echo "... pushed $IMG:$t";
+        done ;
+      fi
+
+integrations:
+  hub:
+    - integrationName: opsgang_dockerhub
+      type: docker
+      branches:
+        only:
+          - master

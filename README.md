@@ -49,20 +49,32 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 ## running
 
 ```bash
-# use a version of terraform not built in to an available opsgang container
-# Set env var TERRAFORM_VERSION, and the container will install and use this version.
+# To use terraform >0.10.0 with preinstalled aws and/or fastly provisioners:
 #
+# Mount your terraform dir and set env var TERRAFORM_WORKING_DIRECTORY to mount path.
+#
+docker run -i --rm \
+    -v /path/to/my_tf_dir:/workspace \
+    -e TERRAFORM_WORKING_DIRECTORY=/workspace \
+        opsgang/aws_terraform:stable <some cmds to run>
+```
+
+```bash
+# To use a version of terraform not built in to an available opsgang container:
+#
+# Set env var TERRAFORM_VERSION, and the container will install and use this version.
 # e.g. to use 0.9.8
+#
 docker run --rm -e TERRAFORM_VERSION=0.9.8 -i opsgang/aws_terraform:stable <some cmds to run>
 ```
 
 ```bash
-# run /path/to/script.sh which calls terraform, aws cli, curl, jq blah ...
+# To run /path/to/script.sh which calls terraform, aws cli, curl, jq blah ...
 docker run --rm -i -v /path/to/script.sh:/script.sh:ro opsgang/aws_terraform:stable /script.sh
 ```
 
 ```bash
-# make my aws creds available and run /some/python/script.py
+# To make my aws creds available and run /some/python/script.py
 export AWS_ACCESS_KEY_ID="i'll-never-tell" # replace glibness with your access key
 export AWS_SECRET_ACCESS_KEY="that's-for-me-to-know" # amend as necessary
 
