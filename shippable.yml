@@ -27,7 +27,8 @@ build:
         v=$(echo $a | jq -r '.version') ;
         gt=$(echo $a | jq -r '."opsgang.build_git_tag"') ;
         pv=terraform-$(echo $a | jq -r '."opsgang.terraform_version"') ;
-        tags="$v $gt $pv stable" ; echo $a | jq . ; echo "docker tags:($tags)" ;
+        pmv=$(echo $pv | sed -e 's/\.[0-9]\+$//') ;
+        tags="$v $gt $pv $pmv stable" ; echo $a | jq . ; echo "docker tags:($tags)" ;
         for t in $tags; do
           docker tag opsgang/$IMG:candidate opsgang/$IMG:$t;
           docker push opsgang/$IMG:$t;
@@ -42,3 +43,14 @@ integrations:
       branches:
         only:
           - master
+
+  notifications:
+    - integrationName: opsgang_slack_delivery
+      type: slack
+      recipients: "#delivery"
+      branches:
+        only:
+          - master
+      on_success: always
+      on_failure: always
+      on_pull_request: always
