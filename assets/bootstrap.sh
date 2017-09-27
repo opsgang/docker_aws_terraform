@@ -18,7 +18,7 @@ PROVIDERS_DIR=/tf_providers
 [[ -z "$TERRAFORM_VERSION" ]] || /usr/local/bin/terraform_version $TERRAFORM_VERSION  || exit 1
 
 # cp across providers to $TERRAFORM_WORKING_DIR
-if needs_providers
+if need_providers
 then
     if [[ ! -z "$TERRAFORM_WORKING_DIR" ]] && [[ -w "$TERRAFORM_WORKING_DIR" ]]; then
         cp -a $PROVIDERS_DIR/.terraform $TERRAFORM_WORKING_DIR
