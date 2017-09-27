@@ -22,7 +22,7 @@ build:
     - bash ./build.sh # avoid aufs file-locking with new shell
 
   on_success:
-    - if [[ "$BRANCH" == "master" ]]; then
+    - if [[ "$BRANCH" == "master" ]] && [[ "$IS_PULL_REQUEST" != "true" ]]; then
         a=$(docker inspect opsgang/$IMG:candidate | jq -r '.[].Config.Labels') ;
         v=$(echo $a | jq -r '.version') ;
         gt=$(echo $a | jq    r '."opsgang.build_git_tag"') ;
