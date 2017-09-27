@@ -17,6 +17,7 @@ RUN chmod a+x /bootstrap.sh /alpine_build_scripts/* \
     && sh /alpine_build_scripts/install_awscli.sh \
     && sh /alpine_build_scripts/install_credstash.sh \
     && sh /alpine_build_scripts/install_terraform.sh \
+    && cp /etc/vim/vimrc /root/.vimrc \
     && sh /alpine_build_scripts/install_essentials.sh \
     && bash /alpine_build_scripts/install_tf_providers.sh \
     && cp -a /alpine_build_scripts/install_terraform.sh \

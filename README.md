@@ -23,11 +23,15 @@ _... alpine container with common tools to use Hashicorp's terraform on or for a
 **tags on master are built at shippable.com and available from dockerhub**
 
 * terraform-_terraform\_version_ e.g. terraform-0.9.4
-    - for your own sake, this is the preferred form to use
+    - for your own sake, this is the safest form to use.
 
-* _github tag_
+* terraform-_terraform\_minor\_version_ e.g. terraform-0.10
+    - will pull you the latest 0.10.x that we've built.
 
-* _build timestamp_ 
+* _github tag_ - reference versions for us.
+
+* _build timestamp_ - distinct for each image we've successfully pushed.
+    - Of no use to anyone else.
 
 Newer versions will also include more recent versions of alpine and tools.
 
