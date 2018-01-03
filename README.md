@@ -53,12 +53,13 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 ## running
 
 ```bash
-# To use terraform >0.10.0 with preinstalled aws and/or fastly provisioners:
+# To use terraform >0.11.0 with preinstalled aws and/or fastly provisioners:
 #
 # Mount your terraform dir and set env var TERRAFORM_WORKING_DIRECTORY to mount path.
 #
 docker run -i --rm \
     -v /path/to/my_tf_dir:/workspace \
+    -w /workspace \
     -e TERRAFORM_WORKING_DIRECTORY=/workspace \
         opsgang/aws_terraform:stable <some cmds to run>
 ```
@@ -93,5 +94,5 @@ docker run --rm -i                      \ # ... run interactive to see stdout / 
 ```bash
 # let me treat the container like a dev workspace and try stuff out.
 # Oh look! vim is preinstalled. How cool! And gratuitous.
-docker run -it opsgang/aws_terraform:stable /bin/bash
+docker run -it --name my_workspace opsgang/aws_terraform:stable /bin/bash
 ```
