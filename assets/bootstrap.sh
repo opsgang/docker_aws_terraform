@@ -28,7 +28,7 @@ need_providers_copied () {
 # * plugin_cache_dir in $HOME/.terraformrc
 # * passed $TF_PLUGIN_CACHE_DIR to container
 user_passed_cache_dir() {
-    local f=$HOME/.terraformrc 
+    local f=$HOME/.terraformrc
     [[ ! -z "$TF_PLUGIN_CACHE_DIR" ]] && return 0
     [[ -r $f ]] && grep -P '^\s*plugin_cache_dir\s*=' $f >/dev/null && return 0
 
@@ -52,7 +52,7 @@ then
         [[ "$1" == "init" ]] && cp -a $PREINSTALLED_PLUGINS/.terraform .
         $(which terraform) "$@"
     }
-    
+
     export -f terraform
 
 else

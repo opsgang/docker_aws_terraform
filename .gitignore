@@ -1,4 +1,7 @@
+**/*.swp
 **/*.pem
 **/.ssh
 **/alpine_build_scripts
-**/*.swp
+**/.terraform
+**/*.tfstate
+**/*.tfstate.backup
