@@ -45,6 +45,7 @@ integrations:
       branches:
         only:
           - master
+          - refactor-to-aws-env
 
   notifications:
     - integrationName: opsgang_slack_delivery
@@ -53,7 +54,6 @@ integrations:
       branches:
         only:
           - master
-          - refactor-to-aws-env
       on_success: always
       on_failure: always
       on_pull_request: never
