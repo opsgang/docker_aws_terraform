@@ -60,7 +60,7 @@ apk_pkg_version() {
 }
 
 terraform_version() {
-    grep -Po '(?<=\bTERRAFORM_VERSION=)[^\\]+' Dockerfile
+    grep -Po '(?<=\bTERRAFORM_VERSION=)[0-9\.]+' Dockerfile
 }
 
 terraform_provider_version() {
@@ -107,12 +107,12 @@ labels() {
     ai=$(alpine_img) || return 1
     init_apk_versions $ai || return 1
 
-    av=$(awscli_version) || return 1
-    cv=$(credstash_version) || return 1
-    jv=$(apk_pkg_version $ai 'jq') || return 1
     tv=$(terraform_version) && [[ -z "$tv" ]] && return 1
     tav=$(terraform_provider_version "aws") && [[ -z "$tav" ]] && return 1
     tfv=$(terraform_provider_version "fastly") && [[ -z "$tfv" ]] && return 1
+    tfl=$(terraform_provider_version "local") && [[ -z "$tfl" ]] && return 1
+    tftm=$(terraform_provider_version "template") && [[ -z "$tftm" ]] && return 1
+    tftf=$(terraform_provider_version "terraform") && [[ -z "$tftf" ]] && return 1
     bb=$(built_by) || return 1
     gu=$(git_uri) || return 1
     gs=$(git_sha) || return 1
@@ -121,12 +121,12 @@ labels() {
 
     cat<<EOM
     --label version=$(date +'%Y%m%d%H%M%S')
-    --label opsgang.awscli_version=$av
-    --label opsgang.credstash_version=$cv
-    --label opsgang.jq_version=$jv
     --label opsgang.terraform_version=$tv
     --label opsgang.terraform_provider_aws=$tav
     --label opsgang.terraform_provider_fastly=$tfv
+    --label opsgang.terraform_provider_local=$tfl
+    --label opsgang.terraform_provider_template=$tftm
+    --label opsgang.terraform_provider_terraform=$tftf
     --label opsgang.build_git_uri=$gu
     --label opsgang.build_git_sha=$gs
     --label opsgang.build_git_branch=$gb

@@ -4,6 +4,7 @@ language: none
 branches:
   only:
     - master
+    - refactor-to-aws-env
 
 env:
   global:
@@ -20,6 +21,7 @@ build:
     - docker pull opsgang/$IMG:stable || true # speed up build layers
     - git clone $SR --depth 1
     - bash ./build.sh # avoid aufs file-locking with new shell
+    - bash ./test.sh
 
   on_success:
     - if [[ "$BRANCH" == "master" ]] && [[ "$IS_PULL_REQUEST" != "true" ]]; then
@@ -38,8 +40,8 @@ build:
 
 integrations:
   hub:
-    - integrationName: opsgang_dockerhub
-      type: docker
+    - integrationName: opsgang_dockerhubreg
+      type: dockerRegistryLogin
       branches:
         only:
           - master
@@ -51,6 +53,7 @@ integrations:
       branches:
         only:
           - master
+          - refactor-to-aws-env
       on_success: always
       on_failure: always
       on_pull_request: never

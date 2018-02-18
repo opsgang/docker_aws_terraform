@@ -1,24 +1,19 @@
 # vim: et sr sw=4 ts=4 smartindent syntax=dockerfile:
-FROM gliderlabs/alpine:3.6
+FROM opsgang/aws_env:stable
 
 LABEL \
       name="opsgang/aws_terraform" \
-      vendor="sortuniq"            \
       description="common tools to run terraform in or for aws"
 
-ENV TERRAFORM_VERSION=0.11.1
+ENV TERRAFORM_VERSION=0.11.3 \
+    PREINSTALLED_PLUGINS=/tf_plugins_cache_dir \
+    PROVIDER_VERSIONS=/provider.versions
 
 COPY alpine_build_scripts/* /alpine_build_scripts/
 COPY assets/* /
 
 RUN chmod a+x /bootstrap.sh /alpine_build_scripts/* \
-    && apk --no-cache --update add coreutils \
-    && sh /alpine_build_scripts/install_vim.sh \
-    && sh /alpine_build_scripts/install_awscli.sh \
-    && sh /alpine_build_scripts/install_credstash.sh \
     && sh /alpine_build_scripts/install_terraform.sh \
-    && cp /etc/vim/vimrc /root/.vimrc \
-    && sh /alpine_build_scripts/install_essentials.sh \
     && bash /alpine_build_scripts/install_tf_providers.sh \
     && cp -a /alpine_build_scripts/install_terraform.sh \
         /usr/local/bin/terraform_version \
