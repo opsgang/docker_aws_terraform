@@ -10,9 +10,10 @@ ENV TERRAFORM_VERSION=0.11.3 \
     PROVIDER_VERSIONS=/provider.versions
 
 COPY alpine_build_scripts/* /alpine_build_scripts/
-COPY assets/* /
+COPY assets /var/tmp/assets
 
-RUN chmod a+x /bootstrap.sh /alpine_build_scripts/* \
+RUN cp -a /var/tmp/assets/. / \
+    && chmod a+x /bootstrap.sh /alpine_build_scripts/* \
     && sh /alpine_build_scripts/install_terraform.sh \
     && bash /alpine_build_scripts/install_tf_providers.sh \
     && cp -a /alpine_build_scripts/install_terraform.sh \
@@ -20,7 +21,7 @@ RUN chmod a+x /bootstrap.sh /alpine_build_scripts/* \
     && cp -a /alpine_build_scripts/install_tf_providers.sh \
         /usr/local/bin/terraform_providers \
     && sh /alpine_build_scripts/install_essentials.sh \
-    && rm -rf /var/cache/apk/* /alpine_build_scripts 2>/dev/null
+    && rm -rf /var/cache/apk/* /var/tmp/assets /alpine_build_scripts 2>/dev/null
 
 ENTRYPOINT ["/bootstrap.sh"]
 

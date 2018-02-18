@@ -49,7 +49,10 @@ then
     echo "INFO $0: - see docs at $ref"
 
     terraform() {
-        [[ "$1" == "init" ]] && cp -a $PREINSTALLED_PLUGINS/.terraform .
+        if [[ "$1" == "init" ]]; then
+            mkdir -p .terraform/plugins 2>/dev/null
+            cp -a $PREINSTALLED_PLUGINS/* .terraform/plugins
+        fi
         $(which terraform) "$@"
     }
 
