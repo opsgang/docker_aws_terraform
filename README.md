@@ -6,6 +6,10 @@
 
 _... alpine container with common tools to use Hashicorp's terraform on or for aws_
 
+> For terraform >=0.10.0, this image also supports a plugins cache dir
+> and is preinstalled with some popular ones to reduce download dependencies
+> at run-time.
+
 ## featuring ...
 
 * [hashicorp's terraform] [1]
@@ -28,7 +32,7 @@ _... alpine container with common tools to use Hashicorp's terraform on or for a
 * terraform-_terraform\_minor\_version_ e.g. terraform-0.10
     - will pull you the latest 0.10.x that we've built.
 
-* _github tag_ - reference versions for us.
+* _github tag_ - reference versions for opsgang peeps.
 
 * _build timestamp_ - distinct for each image we've successfully pushed.
     - Of no use to anyone else.
@@ -42,6 +46,7 @@ git clone https://github.com/opsgang/docker_aws_terraform.git
 cd docker_aws_terraform
 git clone https://github.com/opsgang/alpine_build_scripts
 ./build.sh # adds custom labels to image
+./test.sh
 ```
 
 ## installing
@@ -53,15 +58,19 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 ## running
 
 ```bash
-# To use terraform >0.11.0 with preinstalled aws and/or fastly provisioners:
+# To use terraform >0.11.0 with preinstalled plugins cache dir
+# against your own terraform (in /my/tf/dir)
 #
-# Mount your terraform dir and set env var TERRAFORM_WORKING_DIRECTORY to mount path.
+docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
+    opsgang/aws_terraform:stable <some cmds to run>
+
+# To use a plugins cache dir on the host (if terraform version >=0.10.7)
+# mount it to /tf_plugins_cache_dir and set TF_PLUGIN_CACHE_DIR var:
 #
-docker run -i --rm \
-    -v /path/to/my_tf_dir:/workspace \
-    -w /workspace \
-    -e TERRAFORM_WORKING_DIRECTORY=/workspace \
-        opsgang/aws_terraform:stable <some cmds to run>
+docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
+    -v /my/cache/dir:/tf_plugins_cache_dir \
+    -e TF_PLUGIN_CACHE_DIR=/tf_plugins_cache_dir \
+    opsgang/aws_terraform:stable <some cmds to run>
 ```
 
 ```bash

@@ -11,7 +11,7 @@ terraform_version() {
     return $rc
 }
 
-# ... cp across providers to $TERRAFORM_WORKING_DIR for some versions of terraform
+# ... cp across plugins?
 need_providers_copied () {
     # only interested if version more than or equal to 0.10.0
     local ge="0.10.0" lt="0.10.7" tv="$_TV"
