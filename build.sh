@@ -61,13 +61,9 @@ apk_pkg_version() {
 
 fetch_alpine_build_scripts() {
     if [[ -d alpine_build_scripts ]]; then
-        echo "INFO: Alpine scripts updating started."
         cd alpine_build_scripts && git pull && cd ..
-        echo "INFO: Alpine scripts updating finished."
     else
-        echo "INFO: Alpine scripts repo cloning started."
         git clone --depth 1 https://github.com/opsgang/alpine_build_scripts
-        echo "INFO: Alpine scripts repo cloning finished."
     fi
 }
 
@@ -154,7 +150,9 @@ docker_build(){
     labels=$(labels) || return 1
     n=$(img_name) || return 1
 
+    echo "INFO: fetching the Alpine build scripts…"
     fetch_alpine_build_scripts || 1
+    echo "INFO: fetching the Alpine build scripts… done"
 
     echo "INFO: adding these labels:"
     echo "$labels"

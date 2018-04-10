@@ -7,8 +7,7 @@ LABEL \
 
 ENV TERRAFORM_VERSION=0.11.6 \
     PREINSTALLED_PLUGINS=/tf_plugins_cache_dir \
-    PROVIDER_VERSIONS=/provider.versions \
-    SCRIPTS_REPO="https://github.com/opsgang/alpine_build_scripts"
+    PROVIDER_VERSIONS=/provider.versions
 
 COPY alpine_build_scripts/* bootstrap.sh /alpine_build_scripts/
 COPY assets /var/tmp/assets
