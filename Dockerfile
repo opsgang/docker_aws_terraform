@@ -22,6 +22,8 @@ RUN cp -a /var/tmp/assets/. / \
     && cp -a /alpine_build_scripts/install_tf_providers.sh \
         /usr/local/bin/terraform_providers \
     && sh /alpine_build_scripts/install_essentials.sh \
+    && chmod a+rwx /usr/local/bin \
+    && chmod a+rwx /usr/local/bin/terraform \
     && rm -rf /var/cache/apk/* /var/tmp/assets /alpine_build_scripts 2>/dev/null
 
 ENTRYPOINT ["/bootstrap.sh"]
