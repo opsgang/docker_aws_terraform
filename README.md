@@ -8,9 +8,12 @@
 
 _... alpine container with common tools and scripts to use Hashicorp's terraform on or for aws_
 
-> For terraform >=0.10.0, this image also supports a plugins cache dir
-> and is preinstalled with some popular ones to reduce download dependencies
-> at run-time.
+> Use different versions of terraform. Use host volumes to cache plugins and
+> terraform binaries for faster run-time.
+
+> This image is always preloaded with the latest terraform at time it was built.
+> It is also preinstalled with some popular plugins to reduce download dependencies
+> at run-time. See [assets/provider.versions](assets/provider.versions)
 
 ## features
 
@@ -77,6 +80,13 @@ docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
 # e.g. to use 0.9.8
 #
 docker run --rm -e TERRAFORM_VERSION=0.9.8 -i opsgang/aws_terraform:stable <some cmds to run>
+
+# To 'cache' the downloaded terraforms on a host volume,
+# mount your dir to /tf_bin
+docker run --rm -i \
+    -e TERRAFORM_VERSION=0.11.7 \
+    -v /my/tf/binaries:/tf_bin \
+    opsgang/aws_terraform:stable <some cmds to run>
 ```
 
 ```bash
