@@ -98,7 +98,7 @@ fi
     echo "INFO $0: $test_name"
     echo "INFO $0: $test_name ... trying non-root users with docker run --user "
 
-    for uid_gid in 501:501 0:0 502:502; do
+    for uid_gid in 501:501 0:0 501:501; do
 
     echo "INFO $0: $test_name ... trying $uid_gid"
         _c=$c_$(date '+%Y%m%d%H%M%S')
@@ -139,7 +139,7 @@ fi
     docker run --rm --name $_c \
         $(vol_str_for_caches) \
         -w /_test/default \
-        $img /bin/bash -c "$var ; $cmd" || exit 1
+        $img /bin/bash -c "$var ; $cmd" >/dev/null || exit 1
 
     docker rm -f $_c 2>/dev/null
 
@@ -149,8 +149,6 @@ fi
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_plugin_cache_dir /var/tmp
         o="$(find /var/tmp/tf_bin /var/tmp/tf_plugin_cache_dir -type f | sort)"
     else
-        echo "INFO $0: $test_name ... doing FIND of mounted dirs"
-        find /tf_bin /tf_plugin_cache_dir -type f | sort
         o="$(find /tf_bin /tf_plugin_cache_dir -type f | sort)"
     fi
 
@@ -183,7 +181,7 @@ fi
         $(vol_str_for_caches) \
         --user 501:501 \
         -w /_test/unpriv \
-        $img /bin/bash -c "$var ; $cmd" || exit 1
+        $img /bin/bash -c "$var ; $cmd" >/dev/null || exit 1
 
     docker rm -f $_c 2>/dev/null
 
