@@ -7,7 +7,7 @@ LABEL \
 
 ENV TERRAFORM_VERSION=0.11.7 \
     TERRAFORM_BIN=/tf_bin \
-    PREINSTALLED_PLUGINS=/tf_plugins_cache_dir \
+    PREINSTALLED_PLUGINS=/tf_plugin_cache_dir \
     PROVIDER_VERSIONS=/provider.versions
 
 COPY assets /assets

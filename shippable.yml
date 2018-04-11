@@ -9,12 +9,12 @@ env:
 build:
 
   pre_ci_boot:
-    options: -v /tf/tf_bin:/tf_bin -v /tf/tf_plugins_cache_dir:/tf_plugins_cache_dir
+    options: -v /tf_bin -v /tf_plugin_cache_dir
 
   ci:
     - curl -O -L $JQ && chmod +x jq-linux64 && sudo mv jq-linux64 /usr/bin/jq
     - docker pull opsgang/$IMG:stable || true # speed up build layers
-    - mkdir -p /tf/tf_bin /tf/tf_plugins_cache_dir
+    - mkdir /tf_bin /tf_plugin_cache_dir || true
     - bash ./build.sh # avoid aufs file-locking with new shell
     - bash ./test.sh
 
