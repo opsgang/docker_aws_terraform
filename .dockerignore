@@ -2,3 +2,4 @@ build.sh
 **/*.pem
 **/*.tmpl
 **/*.swp
+**/.terraform

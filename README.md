@@ -2,23 +2,21 @@
 [2]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
 [3]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
 [4]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
+[5]: https://github.com/opsgang/docker_aws_env "opsgang's aws_env docker image"
+
 # docker\_aws\_terraform
 
-_... alpine container with common tools to use Hashicorp's terraform on or for aws_
+_... alpine container with common tools and scripts to use Hashicorp's terraform on or for aws_
 
 > For terraform >=0.10.0, this image also supports a plugins cache dir
 > and is preinstalled with some popular ones to reduce download dependencies
 > at run-time.
 
-## featuring ...
+## features
 
-* [hashicorp's terraform] [1]
+* [hashicorp's terraform][1]
 
-* [aws cli] [2]
-
-* [credstash] [3] (for managing secrets in aws)
-
-* bash, curl, git, make, jq, openssh client [and friends] [4]
+* tools from [opsgang/aws\_env][5] including, [aws cli][2], [credstash][3] [and more][4]
 
 ## docker tags
 
@@ -44,7 +42,6 @@ Newer versions will also include more recent versions of alpine and tools.
 ```bash
 git clone https://github.com/opsgang/docker_aws_terraform.git
 cd docker_aws_terraform
-git clone https://github.com/opsgang/alpine_build_scripts
 ./build.sh # adds custom labels to image
 ./test.sh
 ```
@@ -65,11 +62,11 @@ docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
     opsgang/aws_terraform:stable <some cmds to run>
 
 # To use a plugins cache dir on the host (if terraform version >=0.10.7)
-# mount it to /tf_plugins_cache_dir and set TF_PLUGIN_CACHE_DIR var:
+# mount it to /tf_plugins_cache_dir and set TF_PLUGINS_CACHE_DIR var:
 #
 docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
     -v /my/cache/dir:/tf_plugins_cache_dir \
-    -e TF_PLUGIN_CACHE_DIR=/tf_plugins_cache_dir \
+    -e TF_PLUGINS_CACHE_DIR=/tf_plugins_cache_dir \
     opsgang/aws_terraform:stable <some cmds to run>
 ```
 

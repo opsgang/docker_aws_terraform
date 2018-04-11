@@ -1,4 +1,4 @@
-aws=1.9.0
+aws=1.14.0
 fastly=0.1.4
 local=1.1.0
 null=1.0.0
