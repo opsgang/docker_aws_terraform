@@ -10,6 +10,8 @@ vol_str_for_caches() {
     echo --volumes-from ${SHIPPABLE_CONTAINER_NAME:-$LOCAL_CACHE_CONTAINER}
 }
 
+rc=0
+
 img=opsgang/${IMG:-aws_terraform}:candidate
 _c=test_tf
 cmd='sleep 3 ; export TF_PLUGIN_CACHE_DIR=/tf_plugin_cache_dir ; terraform init -input=false ; find $TF_PLUGIN_CACHE_DIR ; terraform apply -input=false -auto-approve'
