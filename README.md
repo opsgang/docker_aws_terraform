@@ -65,11 +65,11 @@ docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
     opsgang/aws_terraform:stable <some cmds to run>
 
 # To use a plugins cache dir on the host (if terraform version >=0.10.7)
-# mount it to /tf_plugins_cache_dir and set TF_PLUGINS_CACHE_DIR var:
+# mount it to /tf_plugin_cache_dir and set TF_PLUGIN_CACHE_DIR var:
 #
 docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
-    -v /my/cache/dir:/tf_plugins_cache_dir \
-    -e TF_PLUGINS_CACHE_DIR=/tf_plugins_cache_dir \
+    -v /my/cache/dir:/tf_plugin_cache_dir \
+    -e TF_PLUGIN_CACHE_DIR=/tf_plugin_cache_dir \
     opsgang/aws_terraform:stable <some cmds to run>
 ```
 

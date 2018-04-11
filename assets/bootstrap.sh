@@ -26,10 +26,10 @@ need_providers_copied () {
 
 # return 0 if user has specified either:
 # * plugin_cache_dir in $HOME/.terraformrc
-# * passed $TF_PLUGINS_CACHE_DIR to container
+# * passed $TF_PLUGIN_CACHE_DIR to container
 user_passed_cache_dir() {
     local f=$HOME/.terraformrc
-    [[ ! -z "$TF_PLUGINS_CACHE_DIR" ]] && return 0
+    [[ ! -z "$TF_PLUGIN_CACHE_DIR" ]] && return 0
     [[ -r $f ]] && grep -P '^\s*plugin_cache_dir\s*=' $f >/dev/null && return 0
 
     return 1
@@ -80,9 +80,9 @@ then
     export -f terraform
 
 else
-    # ... set TF_PLUGINS_CACHE_DIR if not in .terraformrc or already passed by user
+    # ... set TF_PLUGIN_CACHE_DIR if not in .terraformrc or already passed by user
     # (Note that cache dir will be ignored unless terraform >= v0.10.7)
-    user_passed_cache_dir || export TF_PLUGINS_CACHE_DIR="$PREINSTALLED_PLUGINS"
+    user_passed_cache_dir || export TF_PLUGIN_CACHE_DIR="$PREINSTALLED_PLUGINS"
 fi
 
 unset _TV need_providers_copied
