@@ -14,7 +14,7 @@ rc=0
 
 img=opsgang/${IMG:-aws_terraform}:candidate
 _c=test_tf
-cmd='sleep 3 ; export TF_PLUGIN_CACHE_DIR=/tf_plugin_cache_dir ; terraform init -input=false ; find $TF_PLUGIN_CACHE_DIR ; terraform apply -input=false -auto-approve'
+cmd='sleep 3 ; terraform init -input=false ; terraform apply -input=false -auto-approve'
 
 # ... used in tests for cache dirs if not running in shippable.
 LOCAL_CACHE_CONTAINER=tf_cache_dirs
@@ -30,8 +30,6 @@ if [[ -z "$SHIPPABLE_CONTAINER_NAME" ]]; then
         -v $tfcd:/tf_plugin_cache_dir \
         -v $tfbin:/tf_bin \
         alpine:3.7 /bin/sh -c 'while true; do sleep 1000; done'
-else
-    docker inspect $SHIPPABLE_CONTAINER_NAME
 fi
 
 (
@@ -192,8 +190,6 @@ fi
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_plugin_cache_dir /var/tmp
         o="$(find /var/tmp/tf_bin /var/tmp/tf_plugin_cache_dir -type f | sort)"
     else
-        echo "INFO $0: $test_name ... doing FIND of mounted dirs"
-        find /tf_bin /tf_plugin_cache_dir -type f | sort
         o="$(find /tf_bin /tf_plugin_cache_dir -type f | sort)"
     fi
 
