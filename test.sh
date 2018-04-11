@@ -30,6 +30,8 @@ if [[ -z "$SHIPPABLE_CONTAINER_NAME" ]]; then
         -v $tfcd:/tf_plugin_cache_dir \
         -v $tfbin:/tf_bin \
         alpine:3.7 /bin/sh -c 'while true; do sleep 1000; done'
+else
+    docker inspect $SHIPPABLE_CONTAINER_NAME
 fi
 
 (
