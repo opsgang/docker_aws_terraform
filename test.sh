@@ -12,7 +12,7 @@ vol_str_for_caches() {
 
 img=opsgang/${IMG:-aws_terraform}:candidate
 _c=test_tf
-cmd='sleep 3 ; terraform init -input=false ; terraform apply -input=false -auto-approve'
+cmd='sleep 3 ; export TF_PLUGIN_CACHE_DIR=/tf_plugin_cache_dir ; terraform init -input=false ; find $TF_PLUGIN_CACHE_DIR ; terraform apply -input=false -auto-approve'
 
 # ... used in tests for cache dirs if not running in shippable.
 LOCAL_CACHE_CONTAINER=tf_cache_dirs
@@ -94,7 +94,7 @@ fi
     echo "INFO $0: $test_name"
     echo "INFO $0: $test_name ... trying non-root users with docker run --user "
 
-    for uid_gid in 501:501 0:0 501:501; do
+    for uid_gid in 501:501 0:0 502:502; do
 
         _c=$c_$(date '+%Y%m%d%H%M%S')
         docker rm -f $_c 2>/dev/null || true
