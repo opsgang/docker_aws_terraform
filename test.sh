@@ -31,60 +31,60 @@ if [[ -z "$SHIPPABLE_CONTAINER_NAME" ]]; then
         alpine:3.7 /bin/sh -c 'while true; do sleep 1000; done'
 fi
 
-(
-    rc=0
-    test_name="default-with-preinstalled-plugins"
-    var="export TF_VAR_ts=$test_name"
-    exp='Apply complete! Resources: 2 added, 0 changed, 0 destroyed.'
-
-    echo "INFO $0: $test_name"
-    echo "INFO $0: $test_name ... should use preloaded terraform version"
-
-    docker rm -f $_c 2>/dev/null || true
-    o=$(
-        docker run --rm --name $_c \
-            -w /_test/default \
-            $img /bin/bash -c "$var ; $cmd"
-    )
-    if [[ $? -ne 0 ]] || [[ ! $(echo "$o" | grep "$exp") ]]; then
-        echo "ERROR $0: $test_name failure"
-        echo "$o"
-        rc=1
-    else
-        echo "INFO $0: $test_name   (passed)"
-    fi
-    docker rm -f $_c 2>/dev/null || true
-    rm -rf _test/.terraform _test/default/.terraform
-) || rc=1
-
-(
-    rc=0
-    test_name="try-preinstalled-plugins-copy-pre-0.10.7"
-    var="export TF_VAR_ts=$test_name"
-    exp='Apply complete! Resources: 2 added, 0 changed, 0 destroyed.'
-    v=0.10.6
-    exp_v='Terraform v0\.10\.6$'
-
-    echo "INFO $0: $test_name"
-    echo "INFO $0: $test_name ... using older terraform which needs plugins copied from cache"
-
-    docker rm -f $_c 2>/dev/null || true
-    o=$(
-        docker run --rm --name $_c \
-            -w /_test/default \
-            -e TERRAFORM_VERSION=$v \
-            $img /bin/bash -c "$var ; $cmd"
-    )
-    if [[ $? -ne 0 ]] || [[ ! $(echo "$o" | grep "$exp") ]] || [[ ! $(echo "$o" | grep -P "$exp_v") ]] ; then
-        echo "ERROR $0: $test_name failure"
-        echo "$o"
-        rc=1
-    else
-        echo "INFO $0: $test_name   (passed)"
-    fi
-    docker rm -f $_c 2>/dev/null || true
-    exit $rc
-) || rc=1
+#(
+#    rc=0
+#    test_name="default-with-preinstalled-plugins"
+#    var="export TF_VAR_ts=$test_name"
+#    exp='Apply complete! Resources: 2 added, 0 changed, 0 destroyed.'
+#
+#    echo "INFO $0: $test_name"
+#    echo "INFO $0: $test_name ... should use preloaded terraform version"
+#
+#    docker rm -f $_c 2>/dev/null || true
+#    o=$(
+#        docker run --rm --name $_c \
+#            -w /_test/default \
+#            $img /bin/bash -c "$var ; $cmd"
+#    )
+#    if [[ $? -ne 0 ]] || [[ ! $(echo "$o" | grep "$exp") ]]; then
+#        echo "ERROR $0: $test_name failure"
+#        echo "$o"
+#        rc=1
+#    else
+#        echo "INFO $0: $test_name   (passed)"
+#    fi
+#    docker rm -f $_c 2>/dev/null || true
+#    rm -rf _test/.terraform _test/default/.terraform
+#) || rc=1
+#
+#(
+#    rc=0
+#    test_name="try-preinstalled-plugins-copy-pre-0.10.7"
+#    var="export TF_VAR_ts=$test_name"
+#    exp='Apply complete! Resources: 2 added, 0 changed, 0 destroyed.'
+#    v=0.10.6
+#    exp_v='Terraform v0\.10\.6$'
+#
+#    echo "INFO $0: $test_name"
+#    echo "INFO $0: $test_name ... using older terraform which needs plugins copied from cache"
+#
+#    docker rm -f $_c 2>/dev/null || true
+#    o=$(
+#        docker run --rm --name $_c \
+#            -w /_test/default \
+#            -e TERRAFORM_VERSION=$v \
+#            $img /bin/bash -c "$var ; $cmd"
+#    )
+#    if [[ $? -ne 0 ]] || [[ ! $(echo "$o" | grep "$exp") ]] || [[ ! $(echo "$o" | grep -P "$exp_v") ]] ; then
+#        echo "ERROR $0: $test_name failure"
+#        echo "$o"
+#        rc=1
+#    else
+#        echo "INFO $0: $test_name   (passed)"
+#    fi
+#    docker rm -f $_c 2>/dev/null || true
+#    exit $rc
+#) || rc=1
 
 (
     rc=0
@@ -95,7 +95,7 @@ fi
     echo "INFO $0: $test_name"
     echo "INFO $0: $test_name ... trying non-root users with docker run --user "
 
-    for uid_gid in 501:501 1501:1501; do
+    for uid_gid in 501:501 0:0 501:501; do
 
         _c=$c_$(date '+%Y%m%d%H%M%S')
         docker rm -f $_c 2>/dev/null || true
@@ -145,6 +145,8 @@ fi
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_plugins_cache_dir /var/tmp
         o="$(find /var/tmp/tf_bin /var/tmp/tf_plugins_cache_dir -type f | sort)"
     else
+        echo "INFO $0: $test_name ... doing FIND of mounted dirs"
+        find /tf /tf_bin /tf_plugins_cache_dir -type f | sort
         o="$(find /tf /tf_bin /tf_plugins_cache_dir -type f | sort)"
     fi
 
@@ -188,6 +190,8 @@ fi
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_plugins_cache_dir /var/tmp
         o="$(find /var/tmp/tf_bin /var/tmp/tf_plugins_cache_dir -type f | sort)"
     else
+        echo "INFO $0: $test_name ... doing FIND of mounted dirs"
+        find /tf_bin /tf_plugins_cache_dir -type f | sort
         o="$(find /tf_bin /tf_plugins_cache_dir -type f | sort)"
     fi
 
