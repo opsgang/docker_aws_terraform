@@ -12,7 +12,7 @@ vol_str_for_caches() {
 
 img=opsgang/${IMG:-aws_terraform}:candidate
 _c=test_tf
-cmd='sleep 3 ; echo cache dir: export TF_PLUGIN_CACHE_DIR=$TF_PLUGINS_CACHE_DIR ; terraform init -input=false ; find $TF_PLUGINS_CACHE_DIR/ ; terraform apply -input=false -auto-approve'
+cmd='sleep 3 ;  export TF_PLUGIN_CACHE_DIR=$TF_PLUGINS_CACHE_DIR ; terraform init -input=false ; find $TF_PLUGINS_CACHE_DIR/ ; terraform apply -input=false -auto-approve'
 
 # ... used in tests for cache dirs if not running in shippable.
 LOCAL_CACHE_CONTAINER=tf_cache_dirs
