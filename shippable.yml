@@ -15,7 +15,6 @@ build:
     - curl -O -L $JQ && chmod +x jq-linux64 && sudo mv jq-linux64 /usr/bin/jq
     - docker pull opsgang/$IMG:stable || true # speed up build layers
     - mkdir /tf_bin /tf_plugins_cache_dir || true
-    - docker inspect $SHIPPABLE_CONTAINER_NAME
     - bash ./build.sh # avoid aufs file-locking with new shell
     - bash ./test.sh
 
