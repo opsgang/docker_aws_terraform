@@ -2,23 +2,24 @@
 [2]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
 [3]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
 [4]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
+[5]: https://github.com/opsgang/docker_aws_env "opsgang's aws_env docker image"
+
 # docker\_aws\_terraform
 
-_... alpine container with common tools to use Hashicorp's terraform on or for aws_
+_... alpine container with common tools and scripts to use Hashicorp's terraform on or for aws_
 
-> For terraform >=0.10.0, this image also supports a plugins cache dir
-> and is preinstalled with some popular ones to reduce download dependencies
-> at run-time.
+> Use different versions of terraform. Use host volumes to cache plugins and
+> terraform binaries for faster run-time.
 
-## featuring ...
+> This image is always preloaded with the latest terraform at time it was built.
+> It is also preinstalled with some popular plugins to reduce download dependencies
+> at run-time. See [assets/provider.versions](assets/provider.versions)
 
-* [hashicorp's terraform] [1]
+## features
 
-* [aws cli] [2]
+* [hashicorp's terraform][1]
 
-* [credstash] [3] (for managing secrets in aws)
-
-* bash, curl, git, make, jq, openssh client [and friends] [4]
+* tools from [opsgang/aws\_env][5] including, [aws cli][2], [credstash][3] [and more][4]
 
 ## docker tags
 
@@ -44,7 +45,6 @@ Newer versions will also include more recent versions of alpine and tools.
 ```bash
 git clone https://github.com/opsgang/docker_aws_terraform.git
 cd docker_aws_terraform
-git clone https://github.com/opsgang/alpine_build_scripts
 ./build.sh # adds custom labels to image
 ./test.sh
 ```
@@ -65,11 +65,11 @@ docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
     opsgang/aws_terraform:stable <some cmds to run>
 
 # To use a plugins cache dir on the host (if terraform version >=0.10.7)
-# mount it to /tf_plugins_cache_dir and set TF_PLUGIN_CACHE_DIR var:
+# mount it to /tf_plugin_cache_dir and set TF_PLUGIN_CACHE_DIR var:
 #
 docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
-    -v /my/cache/dir:/tf_plugins_cache_dir \
-    -e TF_PLUGIN_CACHE_DIR=/tf_plugins_cache_dir \
+    -v /my/cache/dir:/tf_plugin_cache_dir \
+    -e TF_PLUGIN_CACHE_DIR=/tf_plugin_cache_dir \
     opsgang/aws_terraform:stable <some cmds to run>
 ```
 
@@ -80,6 +80,13 @@ docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
 # e.g. to use 0.9.8
 #
 docker run --rm -e TERRAFORM_VERSION=0.9.8 -i opsgang/aws_terraform:stable <some cmds to run>
+
+# To 'cache' the downloaded terraforms on a host volume,
+# mount your dir to /tf_bin
+docker run --rm -i \
+    -e TERRAFORM_VERSION=0.11.7 \
+    -v /my/tf/binaries:/tf_bin \
+    opsgang/aws_terraform:stable <some cmds to run>
 ```
 
 ```bash
