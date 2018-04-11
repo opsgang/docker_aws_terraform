@@ -12,13 +12,19 @@ vol_str_for_caches() {
 
 img=opsgang/${IMG:-aws_terraform}:candidate
 _c=test_tf
-cmd="terraform init -input=false ; terraform apply -input=false -auto-approve"
+cmd="sleep 3 ; terraform init -input=false ; terraform apply -input=false -auto-approve"
 
 # ... used in tests for cache dirs if not running in shippable.
 LOCAL_CACHE_CONTAINER=tf_cache_dirs
 tfcd=/var/tmp/tf_plugins_cache_dir
 tfbin=/var/tmp/tf_bin 
+
+docker info
 if [[ -z "$SHIPPABLE_CONTAINER_NAME" ]]; then
+    echo "INFO $0: running local container to act as mounted vols"
+    echo "INFO $0: we do this, because locally we might run the build"
+    echo "INFO $0: within another container ..."
+
     docker run -d --name $LOCAL_CACHE_CONTAINER \
         -v $tfcd:/tf_plugins_cache_dir \
         -v $tfbin:/tf_bin \
@@ -175,6 +181,7 @@ fi
     docker rm -f $_c 2>/dev/null
 
     if [[ -z "$SHIPPABLE_CONTAINER_NAME" ]]; then
+        # e.g when running locally
         rm -rf $tfcd
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_bin /var/tmp
         docker cp -a $LOCAL_CACHE_CONTAINER:/tf_plugins_cache_dir /var/tmp

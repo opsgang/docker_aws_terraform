@@ -15,7 +15,6 @@ COPY assets /assets
 RUN chmod a+x /assets/*.sh /assets/usr/local/bin/* \
     && cp -a /assets/. / \
     && chown -R 501:501 /_test/unpriv \
-    && ls -l /_test /provider.versions \
     && apk --no-cache --update add sudo unzip \
     && mkdir ${TERRAFORM_BIN} \
     && chmod a+w /etc/passwd /etc/group /etc/shadow \
