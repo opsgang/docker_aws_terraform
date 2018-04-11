@@ -51,6 +51,7 @@ then
     echo "$uid:x:$uid:$gid:$uid:/:/bin/ash" >>/etc/passwd
 fi
 
+echo "DEBUG: changing perms on dirs."
 sudo -E /change_perms.sh $uid $gid || exit 1
 
 # Add path to dir containing terraform binary to PATH
@@ -82,8 +83,13 @@ then
 else
     # ... set TF_PLUGIN_CACHE_DIR if not in .terraformrc or already passed by user
     # (Note that cache dir will be ignored unless terraform >= v0.10.7)
-    user_passed_cache_dir || export TF_PLUGIN_CACHE_DIR="$PREINSTALLED_PLUGINS"
+    if ! user_passed_cache_dir
+    then
+        export TF_PLUGIN_CACHE_DIR="$PREINSTALLED_PLUGINS"
+        echo "DEBUG $0: setting TF_PLUGIN_CACHE_DIR in env to $TF_PLUGIN_CACHE_DIR."
+    fi
 fi
 
 unset _TV need_providers_copied
+echo "DEBUG: BOOTSTRAP FINISHED"
 exec "$@"

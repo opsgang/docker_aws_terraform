@@ -28,3 +28,6 @@ if [[ ! -d $BIN_DIR ]] || [[ ! -w $BIN_DIR ]]; then
 fi
 
 chown -R $uid:$gid $BIN_DIR $TF_PLUGIN_CACHE_DIR
+
+echo "DEBUG $0: $(ls -lad $BIN_DIR $TF_PLUGIN_CACHE_DIR)"
+

@@ -100,6 +100,7 @@ fi
 
     for uid_gid in 501:501 0:0 502:502; do
 
+    echo "INFO $0: $test_name ... trying $uid_gid"
         _c=$c_$(date '+%Y%m%d%H%M%S')
         docker rm -f $_c 2>/dev/null || true
         o=$(
