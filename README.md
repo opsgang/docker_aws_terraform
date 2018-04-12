@@ -8,6 +8,8 @@
 
 _... alpine container with common tools and scripts to use Hashicorp's terraform on or for aws_
 
+[![Run Status](https://api.shippable.com/projects/589913a86ee43c0f00b47cb6/badge?branch=master)](https://app.shippable.com/projects/589913a86ee43c0f00b47cb6)
+
 > Use different versions of terraform. Use host volumes to cache plugins and
 > terraform binaries for faster run-time.
 
@@ -40,8 +42,6 @@ _... alpine container with common tools and scripts to use Hashicorp's terraform
 * tools from [opsgang/aws\_env][5] including, [aws cli][2], [credstash][3] [and more][4]
 
 ## docker tags
-
-[![Run Status](https://api.shippable.com/projects/589913a86ee43c0f00b47cb6/badge?branch=master)](https://app.shippable.com/projects/589913a86ee43c0f00b47cb6)
 
 **tags on master are built at shippable.com and available from dockerhub**
 
@@ -89,7 +89,8 @@ you download won't be there once the container is killed.
 >
 
 Bear in mind, the downloaded assets are only suitable for linux amd64
-so don't go trying them with terraform on your beloved macbook.
+so don't go trying to use the cached contents on your beloved macbook
+outside of the container.
 
 The minor caveat is that the container's preinstalled binaries
 and plugins are not available if you mount your own dirs.
