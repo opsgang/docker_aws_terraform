@@ -2,51 +2,67 @@
 [2]: http://docs.aws.amazon.com/cli/latest/reference "use aws apis from cmd line"
 [3]: https://github.com/fugue/credstash "credstash - store and retrieve secrets in aws"
 [4]: https://github.com/opsgang/alpine_build_scripts/blob/master/install_essentials.sh "common GNU tools useful for automation"
+[5]: https://github.com/opsgang/docker_aws_env "opsgang's aws_env docker image"
+
 # docker\_aws\_terraform
 
-_... alpine container with common tools to use Hashicorp's terraform on or for aws_
-
-> For terraform >=0.10.0, this image also supports a plugins cache dir
-> and is preinstalled with some popular ones to reduce download dependencies
-> at run-time.
-
-## featuring ...
-
-* [hashicorp's terraform] [1]
-
-* [aws cli] [2]
-
-* [credstash] [3] (for managing secrets in aws)
-
-* bash, curl, git, make, jq, openssh client [and friends] [4]
-
-## docker tags
+_... alpine container with common tools and scripts to use Hashicorp's terraform on or for aws_
 
 [![Run Status](https://api.shippable.com/projects/589913a86ee43c0f00b47cb6/badge?branch=master)](https://app.shippable.com/projects/589913a86ee43c0f00b47cb6)
 
+> Use different versions of terraform. Use host volumes to cache plugins and
+> terraform binaries for faster run-time.
+
+> This image is always preloaded with the latest terraform at time it was built.
+
+---
+
+* [features](#features)
+
+* [docker tags](#docker-tags)
+
+* [building locally](#building)
+
+* [running](#running)
+
+    * [caching](#caching)
+
+    * [changing terraform version](#changing-terraform-version)
+
+    * [misc. examples](#other-example-uses)
+
+---
+
+## features
+
+* [hashicorp's terraform][1]
+
+* tools from [opsgang/aws\_env][5] including, [aws cli][2], [credstash][3] [and more][4]
+
+## docker tags
+
 **tags on master are built at shippable.com and available from dockerhub**
 
-* terraform-_terraform\_version_ e.g. terraform-0.9.4
-    - for your own sake, this is the safest form to use.
+* terraform-*terraform_version* e.g. terraform-0.10.4
+    - pull with specific terraform version preinstalled.
 
-* terraform-_terraform\_minor\_version_ e.g. terraform-0.10
+* terraform-*terraform_minor_version* e.g. terraform-0.10
     - will pull you the latest 0.10.x that we've built.
 
 * _github tag_ - reference versions for opsgang peeps.
 
 * _build timestamp_ - distinct for each image we've successfully pushed.
-    - Of no use to anyone else.
-
-Newer versions will also include more recent versions of alpine and tools.
+    - Of no obvious use to anyone else.
 
 ## building
+
+**Don't forget to run the tests!**
 
 ```bash
 git clone https://github.com/opsgang/docker_aws_terraform.git
 cd docker_aws_terraform
-git clone https://github.com/opsgang/alpine_build_scripts
 ./build.sh # adds custom labels to image
-./test.sh
+mkdir _t ; TMPD=$PWD/_t ./test.sh
 ```
 
 ## installing
@@ -57,30 +73,56 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 
 ## running
 
+### caching
+
+Obviously as this is a container, the terraform version or the plugins 
+you download won't be there once the container is killed.
+
+>
+> So you don't have to keep downloading the same assets on
+> every run, you can mount a host dir or docker vol to store
+> the terraform binaries and another to store the plugins.
+>
+
+Bear in mind, the downloaded assets are only suitable for linux amd64
+so don't expect the cached artefacts to work locally on your beloved
+macbook as well as in the container.
+
+> *REMEMBER:* the container's preinstalled binary is
+> not available if you mount your terraform bin dir.
+
 ```bash
-# To use terraform >0.11.0 with preinstalled plugins cache dir
-# against your own terraform (in /my/tf/dir)
+# CACHING TERRAFORM BINARIES:
+# mount to /tf_bin
 #
-docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
+docker run -i --rm \
+    -v /my/tf/bin:/tf_bin \
+    [ ... other opts ...]
     opsgang/aws_terraform:stable <some cmds to run>
 
-# To use a plugins cache dir on the host (if terraform version >=0.10.7)
-# mount it to /tf_plugins_cache_dir and set TF_PLUGIN_CACHE_DIR var:
+# CACHING PLUGINS: (if terraform version >=0.10.7)
+# mount to /tf_plugin_cache_dir
 #
-docker run -i --rm -v /my/tf/dir:/workspace -w /workspace \
-    -v /my/cache/dir:/tf_plugins_cache_dir \
-    -e TF_PLUGIN_CACHE_DIR=/tf_plugins_cache_dir \
+docker run -i --rm \
+    -v /my/cache/dir:/tf_plugin_cache_dir \
+    [ ... other opts ...]
     opsgang/aws_terraform:stable <some cmds to run>
 ```
 
+### changing terraform version
+
 ```bash
-# To use a version of terraform not built in to an available opsgang container:
+# To use a version of terraform not preinstalled:
+# Set env var TERRAFORM_VERSION=<desired semantic version>
 #
-# Set env var TERRAFORM_VERSION, and the container will install and use this version.
-# e.g. to use 0.9.8
-#
-docker run --rm -e TERRAFORM_VERSION=0.9.8 -i opsgang/aws_terraform:stable <some cmds to run>
+docker run --rm -i \
+    -e TERRAFORM_VERSION=0.11.4 \
+    [ ... other opts ... ]
+    opsgang/aws_terraform:stable <some cmds to run>
+
 ```
+
+### other example uses ...
 
 ```bash
 # To run /path/to/script.sh which calls terraform, aws cli, curl, jq blah ...

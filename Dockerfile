@@ -5,23 +5,21 @@ LABEL \
       name="opsgang/aws_terraform" \
       description="common tools to run terraform in or for aws"
 
-ENV TERRAFORM_VERSION=0.11.3 \
-    PREINSTALLED_PLUGINS=/tf_plugins_cache_dir \
-    PROVIDER_VERSIONS=/provider.versions
+ENV TERRAFORM_VERSION=0.11.10 \
+    TERRAFORM_BIN=/tf_bin \
+    PLUGIN_CACHE=/tf_plugin_cache_dir
 
-COPY alpine_build_scripts/* /alpine_build_scripts/
-COPY assets /var/tmp/assets
+COPY assets /assets
 
-RUN cp -a /var/tmp/assets/. / \
-    && chmod a+x /bootstrap.sh /alpine_build_scripts/* \
-    && sh /alpine_build_scripts/install_terraform.sh \
-    && bash /alpine_build_scripts/install_tf_providers.sh \
-    && cp -a /alpine_build_scripts/install_terraform.sh \
-        /usr/local/bin/terraform_version \
-    && cp -a /alpine_build_scripts/install_tf_providers.sh \
-        /usr/local/bin/terraform_providers \
-    && sh /alpine_build_scripts/install_essentials.sh \
-    && rm -rf /var/cache/apk/* /var/tmp/assets /alpine_build_scripts 2>/dev/null
+RUN chmod a+x /assets/*.sh /assets/usr/local/bin/* \
+    && cp -a /assets/. / \
+    && chown -R 501:501 /_test/unpriv \
+    && apk --no-cache --update add sudo unzip \
+    && mkdir ${TERRAFORM_BIN} ${PLUGIN_CACHE} \
+    && chmod a+w /etc/passwd /etc/group /etc/shadow \
+    && echo 'ALL ALL=(ALL) NOPASSWD: SETENV: /change_perms.sh' > /etc/sudoers.d/change_perms \
+    && bash /usr/local/bin/terraform_version \
+    && rm -rf /var/cache/apk/* /assets 2>/dev/null
 
 ENTRYPOINT ["/bootstrap.sh"]
 
