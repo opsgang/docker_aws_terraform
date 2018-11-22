@@ -143,7 +143,7 @@ fi
 
     [[ -z "$SHIPPABLE_CONTAINER_NAME" ]] && rm -rf $tfbin/* $tfcd/*
 
-    docker run -it --rm --name $_c \
+    docker run --rm --name $_c \
         $(vol_str_for_caches) \
         -w /_test/default \
         $img /bin/bash -c "$var ; $cmd" >/dev/null || exit 1
@@ -181,7 +181,7 @@ fi
 
     [[ -z "$SHIPPABLE_CONTAINER_NAME" ]] && rm -rf $tfbin/* $tfcd/*
 
-    docker run -it --rm --name $_c \
+    docker run --rm --name $_c \
         $(vol_str_for_caches) \
         --user 501:501 \
         -w /_test/unpriv \
