@@ -13,18 +13,23 @@ gid=$2
 
 [[ $uid -eq 0 ]] && exit 0
 
-BIN_DIR="${TERRAFORM_BIN}"
-TF_PLUGIN_CACHE_DIR="${TF_PLUGIN_CACHE_DIR:-$PREINSTALLED_PLUGINS}"
+tfbin="${TERRAFORM_BIN}"
+tfcd="${TF_PLUGIN_CACHE_DIR:-$PLUGIN_CACHE}"
 
-if [[ "$TF_PLUGIN_CACHE_DIR" =~ /sbin ]] || [[ "$BIN_DIR" =~ /sbin ]]; then
-    echo "ERROR $0: really? sbin? Not happening"
-    exit 1
-fi
+rc=0
+for dir in $tfbin $tfcd ; do
+    if [[ ! -d $dir ]] || [[ ! -w $dir ]]; then
+        echo >&2 "ERROR $0: $dir is not a writable dir"
+        rc=1
+    fi
 
-echo "INFO $0: changing perms of bin dir $BIN_DIR and cache dir for uid:gid $uid:$gid."
-if [[ ! -d $BIN_DIR ]] || [[ ! -w $BIN_DIR ]]; then
-    echo "ERROR $0: $BIN_DIR is not a writable dir"
-    exit 1
-fi
+    if [[ "$dir" =~ /sbin ]]; then
+        echo >&2 "ERROR $0: really? sbin? Not happening"
+        rc=1
+    fi
+done
 
-chown -R $uid:$gid $BIN_DIR $TF_PLUGIN_CACHE_DIR
+[[ $rc -eq 0 ]] || exit 1
+
+echo "INFO $0: changing perms of bin dir $tfbin and cache dir for uid:gid $uid:$gid."
+chown -R $uid:$gid $tfbin $tfcd

@@ -14,8 +14,6 @@ _... alpine container with common tools and scripts to use Hashicorp's terraform
 > terraform binaries for faster run-time.
 
 > This image is always preloaded with the latest terraform at time it was built.
-> It is also preinstalled with some popular plugins to reduce download dependencies
-> at run-time. See [assets/provider.versions](assets/provider.versions)
 
 ---
 
@@ -45,18 +43,16 @@ _... alpine container with common tools and scripts to use Hashicorp's terraform
 
 **tags on master are built at shippable.com and available from dockerhub**
 
-* terraform-_terraform\_version_ e.g. terraform-0.9.4
-    - for your own sake, this is the safest form to use.
+* terraform-*terraform_version* e.g. terraform-0.10.4
+    - pull with specific terraform version preinstalled.
 
-* terraform-_terraform\_minor\_version_ e.g. terraform-0.10
+* terraform-*terraform_minor_version* e.g. terraform-0.10
     - will pull you the latest 0.10.x that we've built.
 
 * _github tag_ - reference versions for opsgang peeps.
 
 * _build timestamp_ - distinct for each image we've successfully pushed.
-    - Of no use to anyone else.
-
-Newer versions will also include updated versions of alpine and tools.
+    - Of no obvious use to anyone else.
 
 ## building
 
@@ -66,7 +62,7 @@ Newer versions will also include updated versions of alpine and tools.
 git clone https://github.com/opsgang/docker_aws_terraform.git
 cd docker_aws_terraform
 ./build.sh # adds custom labels to image
-./test.sh
+mkdir _t ; TMPD=$PWD/_t ./test.sh
 ```
 
 ## installing
@@ -89,11 +85,11 @@ you download won't be there once the container is killed.
 >
 
 Bear in mind, the downloaded assets are only suitable for linux amd64
-so don't go trying to use the cached contents on your beloved macbook
-outside of the container.
+so don't expect the cached artefacts to work locally on your beloved
+macbook as well as in the container.
 
-The minor caveat is that the container's preinstalled binaries
-and plugins are not available if you mount your own dirs.
+> *REMEMBER:* the container's preinstalled binary is
+> not available if you mount your terraform bin dir.
 
 ```bash
 # CACHING TERRAFORM BINARIES:
