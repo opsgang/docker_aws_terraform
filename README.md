@@ -75,7 +75,7 @@ docker pull opsgang/aws_terraform:stable # or use the tag you prefer
 
 ### caching
 
-Obviously as this is a container, the terraform version or the plugins 
+Obviously as this is a container, the terraform version or the plugins
 you download won't be there once the container is killed.
 
 >
