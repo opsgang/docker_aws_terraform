@@ -5,8 +5,9 @@ LABEL \
       name="opsgang/aws_terraform" \
       description="common tools to run terraform in or for aws"
 
-ENV TERRAFORM_VERSION=0.11.10 \
+ENV TERRAFORM_VERSION=0.11.11 \
     TERRAFORM_BIN=/tf_bin \
+    LIBS_CONSTRAINT=~>0.0.13 \
     PLUGIN_CACHE=/tf_plugin_cache_dir
 
 COPY assets /assets
@@ -14,6 +15,11 @@ COPY assets /assets
 RUN chmod a+x /assets/*.sh /assets/usr/local/bin/* \
     && cp -a /assets/. / \
     && chown -R 501:501 /_test/unpriv \
+    && mkdir /opsgang/libs \
+    && ghfetch --repo https://github.com/opsgang/libs \
+               --release-asset terraform_run.tgz \
+               --tag "$LIBS_CONSTRAINT" / \
+        && tar xzvf /terraform_run.tgz -C /opsgang/libs && rm -f /terraform_run.tgz \
     && apk --no-cache --update add sudo unzip \
     && mkdir ${TERRAFORM_BIN} ${PLUGIN_CACHE} \
     && chmod a+w /etc/passwd /etc/group /etc/shadow \
