@@ -10,12 +10,14 @@ ENV TERRAFORM_VERSION=0.11.11 \
     LIBS_CONSTRAINT=~>0.0.13 \
     PLUGIN_CACHE=/tf_plugin_cache_dir
 
+ARG GITHUB_OAUTH_TOKEN
+
 COPY assets /assets
 
 RUN chmod a+x /assets/*.sh /assets/usr/local/bin/* \
     && cp -a /assets/. / \
     && chown -R 501:501 /_test/unpriv \
-    && mkdir /opsgang/libs \
+    && mkdir -p /opsgang/libs \
     && ghfetch --repo https://github.com/opsgang/libs \
                --release-asset terraform_run.tgz \
                --tag "$LIBS_CONSTRAINT" / \

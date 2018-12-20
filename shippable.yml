@@ -45,3 +45,6 @@ integrations:
       on_success: always
       on_failure: always
       on_pull_request: never
+
+  generic:
+    - integrationName: GITHUB_OAUTH_TOKEN

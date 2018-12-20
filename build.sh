@@ -136,7 +136,12 @@ docker_build(){
     echo "$labels"
     echo "INFO: building $n:$IMG_TAG"
 
-    docker build --no-cache=true --force-rm $labels -t $n:$IMG_TAG .
+    # if github token in env, use it as --arg to docker build.
+    github_token="${GITHUB_OAUTH_TOKEN:-$GITHUB_TOKEN}"
+    export GITHUB_OAUTH_TOKEN="${github_token}"
+
+    [[ ! -z "$github_token" ]] && echo "using github token ..." && args="--build-arg GITHUB_OAUTH_TOKEN"
+    docker build $args --no-cache=true --force-rm $labels -t $n:$IMG_TAG .
 }
 
 docker_build
